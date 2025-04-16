@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora</title>
+
+    <style>
+        *{
+            border: 1px solid black;
+        }
+        body{
+            margin: 0;
+            padding: 0;
+            background-color: azure;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100svh;
+        }
+        #boxCalc>div{
+            border: 1px solid gray;
+            color: rgb(75, 74, 74);
+            margin: 5px;
+            border-radius: 3px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 30px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        #boxCalc{
+            background-color: white;
+            border: 1px solid gray;
+            border-radius: 10px;
+            box-shadow: 0 5px 10px 0 black;
+            width: 350px;
+            height: 450px;
+            overflow: hidden;
+            display: grid;
+
+            grid-template-areas: 
+            "tela tela tela tela"
+            "mais menos vezes dividir"
+            "num7 num8 num9 igual"
+            "num4 num5 num6 igual"
+            "num1 num2 num3 igual"
+            "num0 ponto limpa igual"
+            ;
+            grid-template-rows: 2fr 1fr 1fr 1fr 1fr 1fr; 
+        }
+        .operadores{
+            background-color: rgb(211, 208, 208);
+        }
+        div #tela{
+            grid-area: tela;
+            cursor: default;
+            justify-content: end;
+            padding: 0 10px;
+        }
+        #mais{grid-area: mais;}
+        #menor{grid-area: menos;}
+        #vezes{grid-area: vezes;}
+        #divdir{grid-area: dividir;}
+        #num1{grid-area: num1;}
+        #num2{grid-area: num2;}
+        #num3{grid-area: num3;}
+        #num4{grid-area: num4;}
+        #num5{grid-area: num5;}
+        #num6{grid-area: num6;}
+        #num7{grid-area: num7;}
+        #num8{grid-area: num8;}
+        #num9{grid-area: num9;}
+        #num0{grid-area: num0;}
+        #btnPonto{grid-area: ponto;}
+        #btnLimpa{grid-area: limpa;}
+        #igual{grid-area: igual; background-color: rgb(91, 161, 253);}
+        .botao:hover{
+            box-shadow: 0 0 3px 0 black;
+        }
+    </style>
+</head>
+<body>
+    <div id="boxCalc">
+        <div id="tela"></div>
+        <div class="botao operadores" id="mais" onclick="selecionarOp('+')">+</div>
+        <div class="botao operadores" id="menos" onclick="selecionarOp('-')">-</div>
+        <div class="botao operadores" id="vezes" onclick="selecionarOp('*')">X</div>
+        <div class="botao operadores" id="dividir" onclick="selecionarOp('/')">÷</div>
+        <div class="botao numeros" id="num1" onclick="addNumero(1)">1</div>
+        <div class="botao numeros" id="num2" onclick="addNumero(2)">2</div>
+        <div class="botao numeros" id="num3" onclick="addNumero(3)">3</div>
+        <div class="botao numeros" id="num4" onclick="addNumero(4)">4</div>
+        <div class="botao numeros" id="num5" onclick="addNumero(5)">5</div>
+        <div class="botao numeros" id="num6" onclick="addNumero(6)">6</div>
+        <div class="botao numeros" id="num7" onclick="addNumero(7)">7</div>
+        <div class="botao numeros" id="num8" onclick="addNumero(8)">8</div>
+        <div class="botao numeros" id="num9" onclick="addNumero(9)">9</div>
+        <div class="botao numeros" id="num0" onclick="addNumero(0)">0</div>
+        <div class="botao numeros" id="btnPonto" onclick="colocaPonto()">.</div>
+        <div class="botao numeros" id="btnLimpa" onclick="limpaTela()">C</div>
+        <div class="botao" id="igual" onclick="calcResultado()">=</div>
+    </div>
+    <script>
+        let tela = document.getElementById("tela")
+        let numero1 = ''
+        let numero2 = ''
+        let operador = ''
+        let ponto = false
+        
+        function addNumero(num){
+            tela.innerText += num
+        }
+        function selecionarOp(op){
+            if(tela.innerText === ""){
+                return
+            }else{
+                numero1 = tela.innerText
+                operador = op
+                tela.innerText = ''
+                ponto = false
+            } 
+        }
+        function calcResultado(){
+            numero2 = tela.innerText
+            let resultado = ''
+            numero1 = eval(numero1)
+            numero2 = eval(numero2)
+            
+            switch(operador){
+                case '+': resultado = numero1 + numero2; break;
+                case '-': resultado = numero1 - numero2; break;
+                case '*': resultado = numero1 * numero2; break;
+                case '/':
+                    if(numero2 !== 0){
+                        resultado = numero1 / numero2
+                    }else{
+                        resultado = "Erro: Divisão por 0"
+                    }
+                    break
+                default:
+                    resultado = "Erro"
+            }
+
+            tela.innerText = resultado
+            numero1 = resultado
+            operador = ''
+            numero2 = ''
+            ponto = false
+        }
+        function limpaTela(){
+            tela.innerText = ''
+            let operador = ''
+            let numero1 = ''
+            let numero2 = ''
+            let ponto = false
+        }
+        function colocaPonto(){
+            if(!ponto){
+                tela.innerText += "."
+                ponto = true
+            }
+        }
+    </script>
+</body>
+</html>
