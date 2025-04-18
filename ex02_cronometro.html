@@ -6,9 +6,6 @@
     <title>Cronômetro</title>
 
     <style>
-        *{
-            border: 1px solid black;
-        }
         body{
             margin: 0;
             padding: 0;
@@ -67,59 +64,61 @@
         <div id="boxParadas">
             <h1>Paradas</h1>
             <ol id="listaParadas">
-
             </ol>
         </div>
         <div id="telaCronometro">
-            <div id="tempo">00:00:00</div>
+            <div id="tempo">00:00:000</div>
             <div id="botoes">
                 <button id="btnZera" onclick="zerar()">Zerar</button>
-                <button id="btnPausa" onclick="pausa()">Começar</button>
+                <button id="btnPausa">Começar</button>
             </div>
-            
         </div>
     </div>
-
 
     <script>
         let btnPausa = document.getElementById("btnPausa")
         let btnZera = document.getElementById("btnZera")
         let tempo = document.getElementById("tempo")
 
+        btnPausa.addEventListener("click", pausaComeca)
+        document.addEventListener("keypress", (tecla)=>{if(tecla.code === "Space"){pausaComeca()}})
+        btnZera.addEventListener("click", zerar)
+        document.addEventListener("keypress", (tecla)=>{if(tecla.key === "z"){zerar()}})
+
         let intervalo = null
         let inicio = null
-        let tempoTotal = 0
-
-        function pausa(){
+        let diferenca = 0
+        
+        function pausaComeca(){
             if(btnPausa.innerText === "Começar"){
-                btnPausa.innerText = "Parar"
-                inicio = Date.now() - tempoTotal
+                btnPausa.innerText = "Pausar"
+                inicio = Date.now() - diferenca
                 intervalo = setInterval(correTempo, 10)
             }else{
                 btnPausa.innerText = "Começar"
                 clearInterval(intervalo)
-                tempoTotal = Date.now() - inicio
+                diferenca = Date.now() - inicio
+            
+                document.querySelector("#listaParadas").innerHTML += `<li>${tempo.innerText}</li>`
             }
         }
+        
         function correTempo(){
             let agora = new Date()
-            let decorrido = agora - inicio
-            let crono = new Date(decorrido)
-            min = crono.getMinutes().toString().padStart(2, '0')
-            sec = crono.getSeconds().toString().padStart(2, '0')
-            mil = Math.floor(crono.getMilliseconds() / 10).toString().padStart(2, '0')
-
-            tempo.innerText = `${min}:${sec}:${mil}`
+            let tempoCorrido = agora - inicio
+            let format = new Date(tempoCorrido)
+            
+            tempo.innerText = `${format.getMinutes().toString().padStart(2, "0")}:${format.getSeconds().toString().padStart(2, "0")}:${format.getMilliseconds().toString().padStart(3, "0")}`
         }
+
         function zerar(){
             clearInterval(intervalo)
-            tempo.innerText = "00:00:00"
             btnPausa.innerText = "Começar"
-            tempoTotal = 0
+            tempo.innerText = "00:00:000"
             inicio = null
-            
+            diferenca = 0
+            document.querySelector("#listaParadas").innerHTML = ""
         }
-
     </script>
     
 </body>
