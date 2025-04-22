@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bloco de Notas</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css">
+</head>
+<body class="bg-light">
+
+    <div class="container py-5">
+        <h1 class="text-center mb-4">Bloco de Notas</h1>
+
+        <div class="card mb-4">
+            <div class="card-body">
+                <input type="hidden" id="idNota">
+                <div class="mb-3">
+                    <label for="titulo" class="form-label">Título</label>
+                    <input type="text" class="form-control" id="titulo" placeholder="Digite o título da nota">
+                </div>
+                <div class="mb-3">
+                    <label for="conteudo" class="form-label">Conteúdo</label>
+                    <textarea class="form-control" id="conteudo" placeholder="Escreva sua nota aqui..."></textarea>
+                </div>
+                <button class="btn btn-primary" id="btnSalvar">Salvar</button>
+                <button class="btn btn-secondary" id="btnCancelar">Cancelar</button>
+            </div>
+        </div>
+
+        <div class="row" id="notasLista"></div>
+    
+    </div>
+    
+    <script>
+        let btnSalvar = document.querySelector("#btnSalvar")
+        let btnCancelar = document.querySelector("#btnCancelar")
+
+        btnSalvar.addEventListener("click", salvaNotas)
+        btnCancelar.addEventListener("click", limpaFormulario)
+
+        function carregaNotas(){
+            let notasExistentes = JSON.parse(localStorage.getItem("notas")) || []
+            let lista = document.querySelector("#notasLista")
+            lista.innerHTML = ""
+            
+            notasExistentes.forEach((nota, index) => {
+                lista.innerHTML += `
+                <div class="col-md-4 mb-3">
+                    <div class="card h-100">
+                        <div class="card-body" onclick="editaNotas(${index})" style="cursor: pointer;">
+                            <h5 class="card-title">${nota.titulo}</h5>
+                            <p class="card-text">${nota.conteudo.substring(0, 100)}...</p>
+                        </div>
+                        <div class="card-footer d-flex justify-content-between">
+                            <button class="btn btn-sm btn-warning" onclick="editaNotas(${index})">Editar</button>
+                            <button class="btn btn-sm btn-danger" onclick="excluirNotas(${index})">Excluir</button>
+                        </div>
+                    </div>
+                </div>`
+            });
+        }
+
+        function salvaNotas(){
+            const titulo = document.querySelector("#titulo").value.trim()
+            const conteudo = document.querySelector("#conteudo").value.trim()
+            const id = document.querySelector("#idNota").value
+
+            if(!titulo || !conteudo){
+                alert("Preencha todos os campos!")
+                return
+            }
+
+            let notasExistentes = JSON.parse(localStorage.getItem("notas")) || []
+            const nota = {titulo, conteudo}
+
+            if(id === ''){
+                notasExistentes.push(nota)
+            }else{
+                notasExistentes[id] = nota
+            }
+
+            localStorage.setItem("notas", JSON.stringify(notasExistentes))
+            carregaNotas()
+            limpaFormulario()
+        }
+
+        function editaNotas(posicao){
+            let notasExistentes = JSON.parse(localStorage.getItem("notas")) || []
+            let nota = notasExistentes[posicao]
+
+            document.querySelector("#idNota").value = posicao
+            document.querySelector("#titulo").value = nota.titulo
+            document.querySelector("#conteudo").value = nota.conteudo
+        }
+
+        function limpaFormulario(){
+            document.querySelector("#idNota").value = ""
+            document.querySelector("#titulo").value = ""
+            document.querySelector("#conteudo").value = ""
+        }
+
+        function excluirNotas(posicao){
+            let confirma = confirm("Tem certeza que deseja excluir esta nota?")
+
+            if(confirma){
+                let notasExistentes = JSON.parse(localStorage.getItem("notas")) || []
+                notasExistentes.splice(posicao, 1)
+                localStorage.setItem("notas", JSON.stringify(notasExistentes))
+                carregaNotas()
+            }
+        }
+
+        window.onload = carregaNotas;
+    </script>
+    
+</body>
+</html>
