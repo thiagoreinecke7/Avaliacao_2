@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Busca Filme</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css">
+</head>
+<body>
+    <nav class="navbar bg-body-tertiary" style="background-color: blue;">
+        <div class="container-fluid">
+          <a class="navbar-brand">Busca Filmes</a>
+          <div class="d-flex" role="search">
+            <input class="form-control me-2" type="text" placeholder="Pesquise aqui" id="inputFilme">
+            <button class="btn btn-outline-success" type="submit" id="btnBuscar">Pesquisar</button>
+          </div>
+        </div>
+    </nav>
+    
+    <div class="container mt-5"></div>
+        <div class="row gx-2 gy-2" id="listaFilmes"></div>
+    </div>
+
+    <script>
+        urlBase = "https://api.themoviedb.org/3"
+        apiKey = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkNGYzMTUwODE2ZmNhNTg1MTdmNGJjY2I0NjlkMTI5YyIsIm5iZiI6MTc0NTM1OTQxMS4yMzMsInN1YiI6IjY4MDgxMjMzNmUxYTc2OWU4MWVlYzM3YiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.FIsgED0PKLQAafsaiw4hvOqL1iMnoccqjkJXTzLs_Ho"
+
+        inputFilme = document.querySelector("#inputFilme")
+        btnBuscar = document.querySelector("#btnBuscar").addEventListener("click", buscaFilme)
+        listaFilmes = document.querySelector("#listaFilmes")
+
+
+        function buscaFilme(){
+
+            const options = {
+                method: 'GET',
+                headers: {
+                    accept: 'application/json',
+                    Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkNGYzMTUwODE2ZmNhNTg1MTdmNGJjY2I0NjlkMTI5YyIsIm5iZiI6MTc0NTM1OTQxMS4yMzMsInN1YiI6IjY4MDgxMjMzNmUxYTc2OWU4MWVlYzM3YiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.FIsgED0PKLQAafsaiw4hvOqL1iMnoccqjkJXTzLs_Ho'
+                } ,
+            };
+
+            fetch('https://api.themoviedb.org/3/authentication', options)
+            .then(res => res.json())
+            .then(res => console.log(res))
+            .catch(err => console.error(err));
+            
+            listaHtml = ''
+            fetch(urlBase + '/search/movie?query=' + inputFilme.value, options)
+            .then((r)=> {return r.json()})
+            .then((o)=>{
+                console.log(o)
+                o.results.forEach(element => {
+                    listaHtml += addMovieList(element)
+                });
+                document.querySelector("#listaFilmes").innerHTML= listaHtml
+            })
+        }
+
+        function addMovieList(filme){
+            str = 
+            `<div class="col-12 col-md-6">
+                <div class="card h-100">
+                    <div class="row g-0">
+                        <div class="col-4">
+                            <img src="https://image.tmdb.org/t/p/w600_and_h900_bestv2${filme.poster_path}" class="img-fluid rounded-start" alt="${filme.title}">
+                        </div>
+                        <div class="col-8">
+                            <div class="card-body">
+                                <h5 class="card-title">${filme.title.substring(0, 20)}</h5>
+                                <p class="card-text">${filme.overview.substring(0, 100)}...</p>
+                                <p class="card-text"><small class="text-muted">Ano: ${filme.release_date}</small></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            `
+            return str
+        }
+    </script>
+    
+</body>
+</html>
